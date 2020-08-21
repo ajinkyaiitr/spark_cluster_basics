@@ -1,0 +1,96 @@
+Spark Driver
+● Process where main() method runs
+● When you launch a Spark shell, you’ve created a driver program
+● Once the driver terminates, the application is finished.
+●Converts DAG (logical graph) into a physical execution plan
+● Runs Spark web interface at port 4040.
+
+Resource Manager
+1.Yarn
+2.Mesos
+3.EC2
+4.StandAlone
+
+Cluster Manager
+---Plugable Component in Spark
+
+Executors
+● Worker processes that run tasks of a job
+● Return results to the driver
+● Launched once at the beginning of a Spark application
+● Run for the entire lifetime of an application,
+● Provide in-memory storage for cached RDDs via Block Manager
+
+Steps to run a Spark Program
+● The user submits an application using spark-submit.
+● spark-submit launches the driver program
+● driver invokes the main() and creates spark context
+● The driver program contacts the cluster manager for resources
+● The cluster manager launches executors
+● The driver process runs through the user application.
+● the driver sends work to executors in the form of tasks.
+● Tasks are run on executor processes to compute and save results.
+● Terminate the executors and release resources if driver’s main() exit or sc.stop()
+
+Spark Deployment(2 Modes)
+1)Local Mode
+2)Cluster Mode
+
+Local Mode:
+1. Default Mode
+2. Does not require any resource manager
+a. Simply download and run.
+3. Good for utilizing multiple cores for processing
+4. Partitions are generally equal to number of CPUs.
+5. Used generally for testing
+
+Syntax:
+spark-submit --master local
+spark-submit --master local[2]
+spark-submit --master local[*]
+
+Installing Standalone Cluster
+1. Copy a compiled version of Spark to the same location on all your machines—for
+example, /home/yourname/spark.
+2. Set up password-less SSH access from your master machine to the others.
+3. Edit the conf/slaves file on your master and fill in the workers’ hostnames.
+4. run sbin/start-all.sh on your master
+5. Check http://masternode:8080
+6. To stop the cluster, run bin/stop-all.sh on your master node.
+
+---TO RUN SPARK INSIDE HADOOP YARN
+export YARN_CONF_DIR=/etc/hadoop/conf/
+export HADOOP_CONF_DIR=/etc/hadoop/conf/
+spark-submit --master yarn --deploy-mode cluster --class org.apache.spark.examples.SparkPi /usr/hdp/current/spark-client/lib/spark-examples-*.jar 10
+
+
+----Cluster Mode - MESOS
+1. Mesos Is a general-purpose cluster manager
+2. it runs both analytics workloads and long-running services (DBs)
+3. To use Spark on Mesos, pass a mesos:// URI to spark-submit:
+spark-submit --master mesos://masternode:5050 yourapp
+4. You can use ZooKeeper to elect master in mesos in case of multi-master
+5. Use a mesos://zk:// URI pointing to a list of ZooKeeper nodes.
+6. Ex:, if you have 3 nodes (n1, n2, n3) having ZK on port 2181, use URI:
+mesos://zk://n1:2181/mesos,n2:2181/mesos,n2:2181/mesos
+
+
+Cluster Mode AWS EC2
+
+Spark comes with a built-in script to launch clusters on Amazon EC2.
+● First create an Amazon Web Services (AWS) account
+● Obtain an access key ID and secret access key.
+● export these as environment variables:
+○ export AWS_ACCESS_KEY_ID="..."
+○ export AWS_SECRET_ACCESS_KEY="..."
+● Create an EC2 SSH key pair and download its private key file (helps in SSH)
+● Launch command of the spark-ec2 script:
+○ cd /path/to/spark/ec2
+○ ./spark-ec2 -k mykeypair -i mykeypair.pem launch mycluster
+
+
+
+
+
+
+
